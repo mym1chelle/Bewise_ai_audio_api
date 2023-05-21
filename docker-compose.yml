@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    container_name: database
+    env_file:
+      - ".env"
+    environment:
+      POSTGRES_PASSWORD: $DB_PASS
+      POSTGRES_USER: $DB_USER
+      POSTGRES_DB: $DB_NAME
+    restart: always
+    ports:
+     - 5432:5432
+    networks:
+      - questions_api
+    volumes:
+      - ./postgresql:/var/lib/postgresql
+  
+  app:
+    container_name: fastapi_app
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    command: ["/src/docker/app.sh"]
+    networks:
+      - questions_api
+    restart: always
+    env_file:
+      - ".env"
+    depends_on:
+      - db
+    volumes:
+      - ./audio_recording:/src/audio_recording
+    
+networks:
+  questions_api:
+    driver: bridge

@@ -1,12 +1,11 @@
 import uuid
-from fastapi import status
-from fastapi import HTTPException
+import datetime
+from fastapi import status, HTTPException
 from jose import JWTError, jwt
-from sqlalchemy import Column, DateTime, UUID, String, select, Integer
+from sqlalchemy import Column, DateTime, UUID, String, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import relationship
-import datetime
 from data.db import Base
 from data.auth import SECRET_KEY, ALGORITHM
 from users.schemas import TokenDataModel

@@ -11,8 +11,7 @@ from audio.engine import (
     get_location_new_file
 )
 from sqlalchemy.exc import DBAPIError
-from fastapi import HTTPException
-from fastapi import status
+from fastapi import HTTPException, status
 from users.models import UserManager
 from audio.models import Record
 
@@ -39,18 +38,14 @@ async def upload_file(
     if user:
         file_location = get_location_old_file(filename=file.filename)
         save_path = get_location_new_file(filename=file.filename)
-        print(save_path)
 
         async with open(file_location, 'wb+') as f:
             await f.write(file.file.read())
-        # with open(file_location, "wb+") as file_object:
-        #     file_object.write(file.file.read())
 
         save_audio(
             file_path=file_location,
             save_file_path=save_path
         )
-        print(user.uuid)
         audio = Record(
             filename=file.filename,
             path=save_path,
@@ -59,7 +54,9 @@ async def upload_file(
         session.add(audio)
         await session.commit()
 
-        return {'link': f'http://localhost:8000/record?id={audio.uuid}&user={user.uuid}'}
+        return {
+            'link': f'http://localhost:8000/record?id={audio.uuid}&user={user.uuid}'
+        }
 
 
 @router.get('/')
@@ -78,21 +75,13 @@ async def dowload_file(
         )
     record = result.scalars().first()
     if record:
-        print('record.user_uuid', type(record.user_uuid))
-        print('user', type(user))
-        print('record.path', record.path)
         new_filename = get_new_file_name(filename=record.filename)
-        print('new_filename', new_filename)
         if str(record.user_uuid) == user:
             new_filename = get_new_file_name(filename=record.filename)
-            print('record.path', record.path)
-            print('new_filename', new_filename)
-            v = FileResponse(
+            return FileResponse(
                 path=record.path,
                 media_type='application/octet-stream',
-                filename='new_filename.mp3'
+                filename=new_filename
             )
-            print('File', v)
-            return v
     else:
         return 'ошибка'

@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from datetime import timedelta
 from data.db import get_async_session
 from data.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
-from typing import List
-from users.models import User, UserManager
+from users.models import UserManager
 from users.schemas import AuthUserModel
 
 
@@ -36,17 +34,3 @@ async def add_question(
         'uuid': user.uuid,
         'acess_token': f'Bearer {access_token}'
     }
-
-
-@router.get("/me/")
-async def read_users_me(
-    token: str,
-    uuid: str,
-    session: AsyncSession = Depends(get_async_session)
-):
-    async with session.begin():
-        user_manager = UserManager(session)
-    return await user_manager.get_current_user(
-        token=token,
-        uuid=uuid
-    )

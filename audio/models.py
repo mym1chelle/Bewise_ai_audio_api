@@ -14,5 +14,7 @@ class Record(Base):
     filename = Column(String(100))
     path = Column(String(256))
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
+    user_uuid = Column(
+        UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False
+    )
     created_by = relationship('User', back_populates="records")
