@@ -1,20 +1,23 @@
 import os
-from pathlib import Path
-import time
-from pydub import AudioSegment
+from aiofiles import open
 from fastapi import APIRouter, Depends, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from data.db import get_async_session
-from audio.models import AudioRecording
+from data.settings import timestr, BASE_DIR, MEDIA_DIR
+from audio.models import Record
+from audio.engine import (
+    get_new_file_name,
+    get_location_old_file,
+    save_audio,
+    get_location_new_file
+)
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-MEDIA_DIR = os.path.join(BASE_DIR, 'audio_recordings')
 
 router = APIRouter(
-    prefix='/audio',
-    tags=['Audio']
+    prefix='/record',
+    tags=['Records']
 )
 
 
@@ -23,15 +26,19 @@ async def upload_file(
     file: UploadFile,
     session: AsyncSession = Depends(get_async_session)
 ):
-    print(BASE_DIR)
-    timestr = time.strftime('%Y%m%d-%H%M%S')
-    new_filename = '{}_{}.mp3'.format(os.path.splitext(file.filename)[0], timestr)
-    file_location = os.path.join(MEDIA_DIR, f'wav_files/{file.filename}')
-    with open(file_location, "wb+") as file_object:
-        file_object.write(file.file.read())
-    audio = AudioSegment.from_file(file_location)
-    SAVE_FILE_PATH = os.path.join(MEDIA_DIR, f'mp3_files/{new_filename}')
-    audio.export(SAVE_FILE_PATH, format='mp3')
+    new_filename = get_new_file_name(filename=file.filename)
+    file_location = get_location_old_file(filename=file.filename)
+    save_path = get_location_new_file(filename=file.filename)
+
+    async with open(file_location, 'wb+') as f:
+        await f.write(file.file.read())
+    # with open(file_location, "wb+") as file_object:
+    #     file_object.write(file.file.read())
+
+    save_audio(
+        file_path=file_location,
+        save_file_path=save_path
+    )
     # data = await file.read()
     # audio = AudioRecording(
     #     name=file.filename,
@@ -39,11 +46,11 @@ async def upload_file(
     # )
     # session.add(audio)
     # await session.commit()
-    return FileResponse(
-        path=SAVE_FILE_PATH,
-        media_type='application/octet-stream',
-        filename=new_filename
-    )
+    # return FileResponse(
+    #     path=SAVE_FILE_PATH,
+    #     media_type='application/octet-stream',
+    #     filename=new_filename
+    # )
 
 @router.post('/download/{audio_id}')
 async def dowload_file(

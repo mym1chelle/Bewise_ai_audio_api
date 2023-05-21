@@ -21,6 +21,7 @@ fasteners = "^0.18"
 pydub = "^0.25.1"
 ffmpeg = "^1.4"
 ffmpeg-python = "^0.2.0"
+aiofiles = "^23.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

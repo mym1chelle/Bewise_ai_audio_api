@@ -1,12 +1,13 @@
 import uuid
-from fastapi import Depends, status
+from fastapi import status
 from fastapi import HTTPException
 from jose import JWTError, jwt
-from sqlalchemy import Column, DateTime, UUID, String, select
+from sqlalchemy import Column, DateTime, UUID, String, select, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy.orm import relationship
 import datetime
-from data.db import Base, async_session_maker
+from data.db import Base
 from data.auth import SECRET_KEY, ALGORITHM
 from users.schemas import TokenDataModel
 
@@ -19,6 +20,7 @@ class User(Base):
     )
     username = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    records = relationship('Record', back_populates='created_by')
 
 
 class UserManager:

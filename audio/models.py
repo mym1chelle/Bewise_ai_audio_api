@@ -1,13 +1,18 @@
 import uuid
-from sqlalchemy import Column, UUID, String, LargeBinary
+import datetime
+from sqlalchemy import Column, UUID, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from data.db import Base
 
 
-class AudioRecording(Base):
-    __tablename__ = 'audio_recordings'
+class Record(Base):
+    __tablename__ = 'records'
 
     uuid = Column(
         UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4
     )
-    name = Column(String(100))
-    data = Column(LargeBinary)
+    filename = Column(String(100))
+    path = Column(String(256))
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
+    created_by = relationship('User', back_populates="records")
