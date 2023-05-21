@@ -78,18 +78,21 @@ async def dowload_file(
         )
     record = result.scalars().first()
     if record:
-        print(record.user_uuid)
-        print(record.path)
+        print('record.user_uuid', type(record.user_uuid))
+        print('user', type(user))
+        print('record.path', record.path)
         new_filename = get_new_file_name(filename=record.filename)
-        print(new_filename)
-        if record.user_uuid == user:
+        print('new_filename', new_filename)
+        if str(record.user_uuid) == user:
             new_filename = get_new_file_name(filename=record.filename)
-            print(record.path)
-            print(new_filename)
-            return FileResponse(
-                path=f'./{record.path}',
+            print('record.path', record.path)
+            print('new_filename', new_filename)
+            v = FileResponse(
+                path=record.path,
                 media_type='application/octet-stream',
                 filename='new_filename.mp3'
             )
+            print('File', v)
+            return v
     else:
         return 'ошибка'
