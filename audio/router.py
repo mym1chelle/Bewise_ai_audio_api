@@ -10,7 +10,9 @@ from audio.engine import (
     save_audio,
     get_location_new_file
 )
-from users.schemas import UploadFileModel
+from sqlalchemy.exc import DBAPIError
+from fastapi import HTTPException
+from fastapi import status
 from users.models import UserManager
 from audio.models import Record
 
@@ -35,9 +37,9 @@ async def upload_file(
         uuid=uuid
     )
     if user:
-        new_filename = get_new_file_name(filename=file.filename)
         file_location = get_location_old_file(filename=file.filename)
         save_path = get_location_new_file(filename=file.filename)
+        print(save_path)
 
         async with open(file_location, 'wb+') as f:
             await f.write(file.file.read())
@@ -56,21 +58,38 @@ async def upload_file(
         )
         session.add(audio)
         await session.commit()
-    # return FileResponse(
-    #     path=SAVE_FILE_PATH,
-    #     media_type='application/octet-stream',
-    #     filename=new_filename
-    # )
 
-@router.post('/download/{audio_id}')
+        return {'link': f'http://localhost:8000/record?id={audio.uuid}&user={user.uuid}'}
+
+
+@router.get('/')
 async def dowload_file(
-    audio_id: str,
+    id: str,
+    user: str,
     session: AsyncSession = Depends(get_async_session)
 ):
-    query = select(AudioRecording).where(
-        AudioRecording.uuid == audio_id
-    )
-    file = (await session.execute(query)).scalars().first()
-    
-    
-    
+    try:
+        query = select(Record).where(Record.uuid == id)
+        result = await session.execute(query)
+    except DBAPIError:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail='Link error',
+        )
+    record = result.scalars().first()
+    if record:
+        print(record.user_uuid)
+        print(record.path)
+        new_filename = get_new_file_name(filename=record.filename)
+        print(new_filename)
+        if record.user_uuid == user:
+            new_filename = get_new_file_name(filename=record.filename)
+            print(record.path)
+            print(new_filename)
+            return FileResponse(
+                path=f'./{record.path}',
+                media_type='application/octet-stream',
+                filename='new_filename.mp3'
+            )
+    else:
+        return 'ошибка'
