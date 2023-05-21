@@ -12,3 +12,8 @@ class AuthUserModel(ExtendedModel):
 
 class TokenDataModel(BaseModel):
     username: str | None = None
+
+
+class UploadFileModel(ExtendedModel):
+    uuid: str
+    token: str
