@@ -16,6 +16,11 @@ aiohttp = "^3.8.4"
 python-dateutil = "^2.8.2"
 environs = "^9.5.0"
 python-jose = "^3.3.0"
+sqlalchemy-file = "^0.4.0"
+fasteners = "^0.18"
+pydub = "^0.25.1"
+ffmpeg = "^1.4"
+ffmpeg-python = "^0.2.0"
 
 
 [tool.poetry.group.dev.dependencies]

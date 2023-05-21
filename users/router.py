@@ -21,8 +21,6 @@ async def add_question(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Авторизация пользователя"""
-    # data = username.dict()
-    # get_username = data['username']
     print(username.username)
     async with session.begin():
         user_manager = UserManager(session)
@@ -35,8 +33,10 @@ async def add_question(
         expires_delta=access_token_expires
     )
     return {
-        'acess_token': f'Bearer {access_token}' 
+        'uuid': user.uuid,
+        'acess_token': f'Bearer {access_token}'
     }
+
 
 @router.get("/me/")
 async def read_users_me(

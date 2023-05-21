@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
-from users.router import router as router_users
+from users.router import router as routers_user
+from audio.router import router as routers_audio
 
 app = FastAPI(
     debug=True,
@@ -9,5 +10,8 @@ app = FastAPI(
 )
 
 app.include_router(
-    router_users
+    routers_user
+)
+app.include_router(
+    routers_audio
 )
