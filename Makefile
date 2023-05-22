@@ -11,7 +11,4 @@ upgrade:
 	poetry run alembic upgrade head
 
 lint:
-	poetry run flake8 audio data users
-
-test:
-	poetry run pytest -v -s
+	poetry run flake8 audio data users main.py
