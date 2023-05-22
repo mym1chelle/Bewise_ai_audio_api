@@ -37,6 +37,7 @@ async def upload_file(
     token: str,
     session: AsyncSession = Depends(get_async_session)
 ):
+    """Загрузка аудиофайла"""
     correct_file = check_file_extention(file.filename)
     if correct_file:
         async with session.begin():
@@ -79,6 +80,7 @@ async def dowload_file(
     user: str,
     session: AsyncSession = Depends(get_async_session)
 ):
+    """Скачивание сконвертированного аудиофайла"""
     incorrect_link = HTTPException(
         status_code=status.HTTP_406_NOT_ACCEPTABLE,
         detail='Incorrect link',

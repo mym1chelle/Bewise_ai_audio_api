@@ -19,7 +19,6 @@ async def add_question(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Авторизация пользователя"""
-    print(username.username)
     async with session.begin():
         user_manager = UserManager(session)
         user = await user_manager.create_user(

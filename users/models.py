@@ -58,14 +58,12 @@ class UserManager:
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             username: str = payload.get("sub")
-            print(username)
             if username is None:
                 raise credentials_exception
             token_data = TokenDataModel(username=username)
         except JWTError:
             raise credentials_exception
         user = await self.get_user(uuid=uuid)
-        print(user)
         if not user or user.username != token_data.username:
             raise credentials_exception
         return user
