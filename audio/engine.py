@@ -29,5 +29,5 @@ def check_file_extention(file_name: str):
     else:
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail='Incorrect file extension. Files can only have a .wav extension'
-    )
+            detail='Incorrect file extension. Files can only a .wav'
+        )

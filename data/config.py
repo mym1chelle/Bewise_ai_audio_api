@@ -25,10 +25,16 @@ class LinkConfig:
 
 
 @dataclass
+class TestConfig:
+    uri: str
+
+
+@dataclass
 class Config:
     db: DataBaseConfig
     token: TokenConfig
     link: LinkConfig
+    test: TestConfig
 
 
 def load_config(path: str = None):
@@ -51,5 +57,8 @@ def load_config(path: str = None):
         ),
         link=LinkConfig(
             host=env.str('HOST')
+        ),
+        test=TestConfig(
+            uri=env.str('TEST_URI')
         )
     )

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 
 class ExtendedModel(BaseModel):
@@ -12,3 +13,8 @@ class AuthUserModel(ExtendedModel):
 
 class TokenDataModel(BaseModel):
     username: str | None = None
+
+
+class UuidTokenModel(BaseModel):
+    uuid: UUID
+    token: str

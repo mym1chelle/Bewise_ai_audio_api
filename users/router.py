@@ -4,7 +4,7 @@ from datetime import timedelta
 from data.db import get_async_session
 from data.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from users.models import UserManager
-from users.schemas import AuthUserModel
+from users.schemas import AuthUserModel, UuidTokenModel
 
 
 router = APIRouter(
@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post('/auth')
+@router.post('/auth/')
 async def add_question(
         username: AuthUserModel,
         session: AsyncSession = Depends(get_async_session)
@@ -30,7 +30,7 @@ async def add_question(
         data={'sub': user.username},
         expires_delta=access_token_expires
     )
-    return {
-        'uuid': user.uuid,
-        'acess_token': f'Bearer {access_token}'
-    }
+    return UuidTokenModel(
+        uuid=user.uuid,
+        token=access_token
+    )
