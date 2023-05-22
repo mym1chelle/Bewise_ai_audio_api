@@ -1,5 +1,6 @@
 import os
 from pydub import AudioSegment
+from fastapi import status, HTTPException
 from data.settings import timestr, MEDIA_DIR, BASE_DIR
 
 
@@ -20,3 +21,13 @@ def save_audio(
         file_path: str, save_file_path: str = BASE_DIR, format: str = 'mp3'
 ):
     AudioSegment.from_file(file_path).export(save_file_path, format=format)
+
+
+def check_file_extention(file_name: str):
+    if file_name.endswith('.wav'):
+        return True
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail='Incorrect file extension. Files can only have a .wav extension'
+    )
