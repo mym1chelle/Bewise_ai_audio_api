@@ -66,4 +66,5 @@ venv.bak/
 staticfiles
 redis_data
 postgresql
-audio_recordings
+audio_recordings/mp3_files/*
+audio_recordings/wav_files/*
