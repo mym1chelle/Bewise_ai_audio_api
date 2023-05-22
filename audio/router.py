@@ -14,6 +14,8 @@ from sqlalchemy.exc import DBAPIError
 from fastapi import HTTPException, status
 from users.models import UserManager
 from audio.models import Record
+from audio.schemas import SendLinkModel
+from data.settings import get_link
 
 
 router = APIRouter(
@@ -54,9 +56,12 @@ async def upload_file(
         session.add(audio)
         await session.commit()
 
-        return {
-            'link': f'http://localhost:8000/record?id={audio.uuid}&user={user.uuid}'
-        }
+        return SendLinkModel(
+            link=get_link(
+                audio_uuid=audio.uuid,
+                user_uuid=user.uuid
+            )
+        )
 
 
 @router.get('/')

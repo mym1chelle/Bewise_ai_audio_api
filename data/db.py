@@ -8,8 +8,6 @@ config = load_config(".env")
 
 SQLALCHEMY_DATABASE_URL = config.db.uri
 
-SQLALCHEMY_DATABASE_URL = config.db.uri
-
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 async_session_maker = sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False

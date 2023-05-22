@@ -33,7 +33,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./audio_recording:/src/audio_recording
+      - ./audio_recordings:/src/audio_recordings
     
 networks:
   questions_api:

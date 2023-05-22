@@ -20,9 +20,15 @@ class TokenConfig:
 
 
 @dataclass
+class LinkConfig:
+    host: str
+
+
+@dataclass
 class Config:
     db: DataBaseConfig
     token: TokenConfig
+    link: LinkConfig
 
 
 def load_config(path: str = None):
@@ -42,5 +48,8 @@ def load_config(path: str = None):
             secret_key=env.str('SECRET_KEY'),
             algorithm=env.str('ALGORITHM'),
             expire_minutes=env.int('EXPIRE_MINUTES')
+        ),
+        link=LinkConfig(
+            host=env.str('HOST')
         )
     )
